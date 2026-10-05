@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Reserve: nummerplaat opzoeken</title>
+<meta name="robots" content="noindex">
+<style>body{font-family:system-ui,sans-serif;max-width:860px;margin:40px auto;padding:0 20px;line-height:1.6}pre{background:#f4f4f5;padding:16px;border-radius:8px;overflow:auto;font-size:13px}code{background:#f4f4f5;padding:1px 5px;border-radius:4px}</style>
+</head>
+<body>
+<h1>Reserve: nummerplaat opzoeken</h1>
+<p>Dit bestand is een bewaarkopie van het nummerplaat-onderdeel dat uit het formulier is gehaald. Het doet niets op de website.</p>
+<p><strong>Weer aanzetten:</strong> plak het HTML-blok hieronder terug in <code>verkopen.html</code> (bovenaan in de fieldset "Uw auto", vóór <code>&lt;div class="row"&gt;</code>) en het JavaScript-blok in <code>verkopen.js</code> (vóór "// validatie"). Zet het bestand <code>api/kenteken.php</code> met een <code>api/config.php</code> (Inmotiv-sleutel) online op hosting met PHP. De opmaak staat nog in <code>styles.css</code>.</p>
+
+<h2>1. HTML (verkopen.html)</h2>
+<pre>&lt;div class="fld"&gt;
+  &lt;label for="kenteken"&gt;Nummerplaat&lt;/label&gt;
+  &lt;div class="plate-row"&gt;
+    &lt;div class="plate"&gt;&lt;span class="eu"&gt;B&lt;/span&gt;&lt;input id="kenteken" name="kenteken" maxlength="9" placeholder="1-ABC-123" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text"&gt;&lt;/div&gt;
+    &lt;button type="button" class="btn btn-ghost" id="plateBtn"&gt;Gegevens ophalen&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class="plate-msg" id="plateMsg" role="status"&gt;&lt;/div&gt;
+&lt;/div&gt;</pre>
+
+<h2>2. JavaScript (verkopen.js)</h2>
+<pre>// ---------- nummerplaat opzoeken (België, via api/kenteken.php) ----------
+const plateIn = document.querySelector('#kenteken'), plateMsg = document.querySelector('#plateMsg'), plateBtn = document.querySelector('#plateBtn');
+const say = (t, cls = '') =&gt; { plateMsg.textContent = t; plateMsg.className = 'plate-msg ' + cls; };
+const cleanPlate = v =&gt; v.toUpperCase().replace(/[^A-Z0-9]/g, '');
+const validPlate = p =&gt; /^([1-9][A-Z]{3}\d{3}|[A-Z]{3}\d{3}|\d{3}[A-Z]{3})$/.test(p);
+
+// zoekt de eerste waarde onder één van de sleutelnamen, overal in het antwoord
+function pick(obj, keys) {
+  const want = keys.map(k =&gt; k.toLowerCase());
+  let found;
+  (function walk(o) {
+    if (found !== undefined || o === null || typeof o !== 'object') return;
+    for (const [k, v] of Object.entries(o)) {
+      if (want.includes(k.toLowerCase()) &amp;&amp; v !== null &amp;&amp; typeof v !== 'object' &amp;&amp; String(v).trim() !== '') { found = v; return; }
+    }
+    for (const v of Object.values(o)) walk(v);
+  })(obj);
+  return found;
+}
+function setSelect(sel, value) {
+  if (!value) return false;
+  const v = String(value).toLowerCase();
+  const opt = [...sel.options].find(o =&gt; o.value &amp;&amp; (o.value.toLowerCase() === v || v.includes(o.value.toLowerCase())));
+  if (opt) { sel.value = opt.value; return true; }
+  return false;
+}
+function fillFromLookup(d) {
+  const merk = pick(d, ['make', 'brand', 'merk', 'makename']);
+  const model = pick(d, ['model', 'modelname', 'modelo']);
+  const datum = pick(d, ['firstregistrationdate', 'first_registration_date', 'datefirstregistration', 'firstregistration', 'eersteinschrijving', 'registrationdate']);
+  const jaar = pick(d, ['year', 'buildyear', 'bouwjaar', 'constructionyear', 'modelyear']) || (datum &amp;&amp; String(datum).match(/(19|20)\d{2}/)?.[0]);
+  const fuel = String(pick(d, ['fuel', 'fueltype', 'brandstof', 'fuel_type']) || '').toLowerCase();
+  const trans = String(pick(d, ['transmission', 'transmissiontype', 'gearbox', 'transmissie']) || '').toLowerCase();
+  const kleur = pick(d, ['color', 'colour', 'kleur']);
+
+  let filled = 0;
+  if (merk) { form.merk.value = merk; filled++; }
+  if (model) { form.model.value = model; filled++; }
+  if (jaar &amp;&amp; setSelect(form.bouwjaar, jaar)) filled++;
+  const fuelMap = [['plug', 'Plug-in hybride'], ['hybri', 'Hybride'], ['diesel', 'Diesel'], ['electr', 'Elektrisch'], ['elektr', 'Elektrisch'], ['lpg', 'LPG / CNG'], ['cng', 'LPG / CNG'], ['gasol', 'Benzine'], ['petrol', 'Benzine'], ['benz', 'Benzine']];
+  const f = fuelMap.find(([k]) =&gt; fuel.includes(k));
+  if (f &amp;&amp; setSelect(form.brandstof, f[1])) filled++;
+  if (trans) { form.transmissie.value = /auto|cvt|dsg|dct/.test(trans) ? 'Automaat' : 'Handgeschakeld'; filled++; }
+  if (kleur) { form.kleur.value = kleur; filled++; }
+  return filled;
+}
+
+plateIn.addEventListener('input', () =&gt; {
+  plateIn.value = plateIn.value.toUpperCase();
+  say('');
+});
+// Beperkt het aantal opzoekingen (elke opzoeking kost geld)
+const MAX_LOOKUPS = 3;
+const lookedUp = new Set();
+let blocked = false;
+let lookups = Number(sessionStorage.getItem('lookups') || 0);
+plateIn.addEventListener('input', () =&gt; { if (!lookedUp.has(cleanPlate(plateIn.value))) plateBtn.disabled = blocked || lookups &gt;= MAX_LOOKUPS; });
+async function lookup() {
+  const p = cleanPlate(plateIn.value);
+  if (!validPlate(p)) return say('Voer een geldige Belgische nummerplaat in, bijvoorbeeld 1-ABC-123.', 'bad');
+  if (lookedUp.has(p)) return say('Deze nummerplaat hebt u al opgezocht.', 'bad');
+  if (lookups &gt;= MAX_LOOKUPS) { plateBtn.disabled = true; return say('U hebt het maximum aantal opzoekingen bereikt. Vul de gegevens zelf in.', 'bad'); }
+  plateBtn.disabled = true; say('Gegevens opzoeken…');
+  try {
+    const res = await fetch('api/kenteken.php?plate=' + p);
+    const json = await res.json().catch(() =&gt; ({}));
+    if (!res.ok) {
+      const m = { not_found: 'Geen voertuig gevonden voor deze nummerplaat. Controleer de plaat of vul de gegevens zelf in.', rate_limited: 'U hebt het maximum aantal opzoekingen bereikt. Vul de gegevens zelf in.', daily_limit: 'Automatisch opzoeken is vandaag niet meer beschikbaar. Vul de gegevens zelf in.', invalid_plate: 'Ongeldige nummerplaat.' };
+      blocked = ['rate_limited', 'daily_limit'].includes(json.error);
+      return say(m[json.error] || 'Automatisch opzoeken is nu niet beschikbaar. Vul de gegevens hieronder zelf in.', 'bad');
+    }
+    lookedUp.add(p);
+    if (!json.cached) { lookups++; sessionStorage.setItem('lookups', lookups); }
+    const n = fillFromLookup(json.data);
+    say(n ? 'Gegevens ingevuld. Controleer ze en vul aan waar nodig.' : 'Voertuig gevonden, maar we konden de velden niet invullen. Vul ze zelf in.', n ? 'ok' : 'bad');
+  } catch {
+    say('Automatisch opzoeken is nu niet beschikbaar. Vul de gegevens hieronder zelf in.', 'bad');
+  } finally { plateBtn.disabled = blocked || lookedUp.has(p) || lookups &gt;= MAX_LOOKUPS; }
+}
+plateBtn.addEventListener('click', lookup);
+plateIn.addEventListener('keydown', e =&gt; { if (e.key === 'Enter') { e.preventDefault(); lookup(); } });</pre>
+</body>
+</html>

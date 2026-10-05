@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ons aanbod – OSM Automotive</title>
+<meta name="description" content="Bekijk en filter de auto's die OSM Automotive te koop aanbiedt.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="site-header"></div>
+<main>
+<div class="page-head"><div class="wrap">
+  <p class="eyebrow">Ons aanbod</p>
+  <h1>Auto's te koop</h1>
+  <p>Zoek en filter in ons aanbod. Interesse in een auto? Klik erop voor meer informatie.</p>
+</div></div>
+
+<section style="padding-top:40px">
+  <div class="wrap">
+    <div class="shop">
+      <aside class="fpanel" id="fpanel">
+        <h2>Filters <button type="button" id="reset">Wissen</button></h2>
+        <div class="fgroup" style="border-top:0;padding-top:0"><label for="q">Zoeken</label><input id="q" class="in" type="search" placeholder="Merk of model"></div>
+        <div class="fgroup"><span class="lbl">Merk</span><div class="fchecks" id="fMerk"></div></div>
+        <div class="fgroup"><span class="lbl">Brandstof</span><div class="fchecks" id="fBrandstof"></div></div>
+        <div class="fgroup"><span class="lbl">Carrosserie</span><div class="fchecks" id="fType"></div></div>
+        <div class="fgroup"><label for="fTrans">Transmissie</label><select id="fTrans" class="in"><option value="">Alle</option><option>Handgeschakeld</option><option>Automaat</option></select></div>
+        <div class="fgroup"><label for="fPrijs">Maximale prijs</label><select id="fPrijs" class="in"><option value="">Geen maximum</option><option value="15000">€ 15.000</option><option value="20000">€ 20.000</option><option value="25000">€ 25.000</option><option value="30000">€ 30.000</option><option value="40000">€ 40.000</option></select></div>
+        <div class="fgroup"><label for="fJaar">Bouwjaar vanaf</label><select id="fJaar" class="in"><option value="">Alle</option><option>2015</option><option>2018</option><option>2020</option><option>2022</option><option>2024</option></select></div>
+        <div class="fgroup"><label for="fKm">Maximale kilometerstand</label><div class="range"><output id="kmOut">400.000+ km</output><input id="fKm" type="range" min="0" max="400000" step="5000" value="400000" aria-label="Maximale kilometerstand"><div class="ticks"><span>0 km</span><span>400K+</span></div></div></div>
+      </aside>
+
+      <div>
+        <div class="toolbar">
+          <div style="display:flex;align-items:center;gap:14px">
+            <button type="button" class="btn btn-ghost ftoggle" id="ftoggle" style="min-height:42px;padding:8px 18px">Filters</button>
+            <p class="count" id="count"></p>
+          </div>
+          <label class="sort">Sorteren
+            <select id="sort" class="in">
+              <option value="nieuw">Nieuwste eerst</option>
+              <option value="prijsUp">Prijs: laag naar hoog</option>
+              <option value="prijsDown">Prijs: hoog naar laag</option>
+              <option value="kmUp">Kilometers: laag naar hoog</option>
+              <option value="jaarDown">Bouwjaar: nieuw naar oud</option>
+            </select>
+          </label>
+        </div>
+        <div class="cars" id="cars"></div>
+        <p class="preview-note" style="margin-top:28px">Voorbeeldaanbod: de auto's, prijzen en afbeeldingen op deze pagina zijn verzonnen en worden vervangen door uw echte aanbod.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<dialog class="detail" id="detail"></dialog>
+
+<div id="site-footer"></div>
+<script src="common.js"></script>
+<script>
+// Voeg hier uw eigen auto's toe. Foto toevoegen: zet het bestand in de map en vul 'foto' in (bijv. 'auto1.jpg').
+// 'badge' is optioneel (bijv. 'Nieuw', 'Gereserveerd'). Verwijder 'voorbeeld: true' bij echte auto's.
+const AUTOS = [
+  { id: 1, merk: 'Peugeot', model: '2008', versie: '1.2 Mild-Hybrid', jaar: 2026, maand: '06', km: 156, trans: 'Automaat', brandstof: 'Benzine', kw: 107, pk: 145, prijs: 30599, type: 'SUV', kleur: 'Blauw', badge: 'Nieuw', voorbeeld: true },
+  { id: 2, merk: 'Volkswagen', model: 'Golf', versie: '1.5 TSI Life', jaar: 2021, maand: '03', km: 62400, trans: 'Handgeschakeld', brandstof: 'Benzine', kw: 96, pk: 130, prijs: 19950, type: 'Hatchback', kleur: 'Grijs', voorbeeld: true },
+  { id: 3, merk: 'BMW', model: '3 Reeks', versie: '318d Touring', jaar: 2019, maand: '09', km: 118000, trans: 'Automaat', brandstof: 'Diesel', kw: 110, pk: 150, prijs: 22500, type: 'Break', kleur: 'Zwart', voorbeeld: true },
+  { id: 4, merk: 'Toyota', model: 'Yaris', versie: '1.5 Hybrid', jaar: 2022, maand: '11', km: 38900, trans: 'Automaat', brandstof: 'Hybride', kw: 85, pk: 116, prijs: 21900, type: 'Hatchback', kleur: 'Wit', badge: 'Gereserveerd', voorbeeld: true },
+  { id: 5, merk: 'Audi', model: 'Q3', versie: '35 TFSI S line', jaar: 2020, maand: '05', km: 74300, trans: 'Automaat', brandstof: 'Benzine', kw: 110, pk: 150, prijs: 27800, type: 'SUV', kleur: 'Zilver', voorbeeld: true },
+  { id: 6, merk: 'Renault', model: 'Clio', versie: 'TCe 90 Evolution', jaar: 2023, maand: '02', km: 21500, trans: 'Handgeschakeld', brandstof: 'Benzine', kw: 67, pk: 91, prijs: 16490, type: 'Hatchback', kleur: 'Rood', badge: 'Nieuw', voorbeeld: true },
+  { id: 7, merk: 'Volvo', model: 'V60', versie: 'B4 Momentum', jaar: 2021, maand: '10', km: 89700, trans: 'Automaat', brandstof: 'Diesel', kw: 145, pk: 197, prijs: 29900, type: 'Break', kleur: 'Grijs', voorbeeld: true },
+  { id: 8, merk: 'Hyundai', model: 'Tucson', versie: '1.6 T-GDI PHEV', jaar: 2022, maand: '07', km: 45200, trans: 'Automaat', brandstof: 'Plug-in hybride', kw: 132, pk: 180, prijs: 33750, type: 'SUV', kleur: 'Wit', voorbeeld: true },
+  { id: 9, merk: 'Ford', model: 'Fiesta', versie: '1.0 EcoBoost Titanium', jaar: 2018, maand: '04', km: 91800, trans: 'Handgeschakeld', brandstof: 'Benzine', kw: 74, pk: 100, prijs: 11950, type: 'Hatchback', kleur: 'Blauw', voorbeeld: true },
+  { id: 10, merk: 'Mercedes-Benz', model: 'C-Klasse', versie: 'C 220 d Avantgarde', jaar: 2020, maand: '01', km: 103500, trans: 'Automaat', brandstof: 'Diesel', kw: 143, pk: 194, prijs: 31500, type: 'Sedan', kleur: 'Zwart', voorbeeld: true },
+];
+
+const $ = s => document.querySelector(s);
+const eur = n => '€ ' + n.toLocaleString('nl-BE');
+const km = n => n.toLocaleString('nl-BE') + ' km';
+const carSvg = '<svg viewBox="0 0 120 60" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 40c0-4 2-6 6-7l10-12c2-3 5-4 9-4h32c4 0 7 1 10 4l10 10c6 1 10 3 12 6 1 2 1 5 0 7H10c-3 0-4-2-4-4z"/><circle cx="32" cy="42" r="7" fill="#1f2025"/><circle cx="90" cy="42" r="7" fill="#1f2025"/><path d="M34 17l-6 14h34V17zM66 17v14h20"/></svg>';
+const st = { merk: new Set(), brandstof: new Set(), type: new Set() };
+
+// filter-checkboxen opbouwen
+function buildChecks(el, key) {
+  const counts = {};
+  AUTOS.forEach(a => counts[a[key]] = (counts[a[key]] || 0) + 1);
+  el.innerHTML = Object.keys(counts).sort().map(v => `<label><input type="checkbox" value="${v}"> ${v} <em>${counts[v]}</em></label>`).join('');
+  el.addEventListener('change', e => { e.target.checked ? st[key === 'merk' ? 'merk' : key].add(e.target.value) : st[key].delete(e.target.value); render(); });
+}
+buildChecks($('#fMerk'), 'merk'); buildChecks($('#fBrandstof'), 'brandstof'); buildChecks($('#fType'), 'type');
+
+function filtered() {
+  const q = $('#q').value.trim().toLowerCase(), trans = $('#fTrans').value, pr = +$('#fPrijs').value, jr = +$('#fJaar').value, kmv = +$('#fKm').value, mk = kmv < 400000 ? kmv : null;
+  let l = AUTOS.filter(a =>
+    (!q || `${a.merk} ${a.model} ${a.versie}`.toLowerCase().includes(q)) &&
+    (!st.merk.size || st.merk.has(a.merk)) && (!st.brandstof.size || st.brandstof.has(a.brandstof)) && (!st.type.size || st.type.has(a.type)) &&
+    (!trans || a.trans === trans) && (!pr || a.prijs <= pr) && (!jr || a.jaar >= jr) && (mk === null || a.km <= mk));
+  const s = $('#sort').value;
+  const by = { nieuw: (a, b) => (b.jaar * 100 + +b.maand) - (a.jaar * 100 + +a.maand), prijsUp: (a, b) => a.prijs - b.prijs, prijsDown: (a, b) => b.prijs - a.prijs, kmUp: (a, b) => a.km - b.km, jaarDown: (a, b) => b.jaar - a.jaar };
+  return l.sort(by[s]);
+}
+
+function render() {
+  const l = filtered();
+  $('#count').textContent = l.length + (l.length === 1 ? ' auto gevonden' : " auto's gevonden");
+  const c = $('#cars');
+  c.innerHTML =!l.length ? `<p class="empty">Geen auto's gevonden met deze filters. <a href="#" data-reset style="color:var(--red);font-weight:600">Filters wissen</a></p>` : l.map(a => `
+    <article class="car" data-id="${a.id}" tabindex="0" role="button" aria-label="Bekijk ${a.merk} ${a.model}">
+      <div class="pic">
+        ${a.foto ? `<img src="${a.foto}" alt="${a.merk} ${a.model}" loading="lazy">` : carSvg}
+        ${a.voorbeeld ? '<span class="tag">Voorbeeld</span>' : ''}
+        ${a.badge ? `<span class="badge">${a.badge}</span>` : ''}
+      </div>
+      <div>
+        <h3>${a.merk} ${a.model}<small>${a.versie}</small></h3>
+        <div class="specs"><span>${a.maand}/${a.jaar}</span><span>${km(a.km)}</span><span>${a.trans}</span><span>${a.brandstof}</span><span>${a.kw} kW (${a.pk} pk)</span></div>
+        <p class="sub">${a.type} · ${a.kleur}</p>
+      </div>
+      <div class="buy">
+        <div class="price">${eur(a.prijs)}<small>Prijs incl. btw</small></div>
+        <span class="btn btn-primary">Bekijk auto</span>
+      </div>
+    </article>`).join('');
+}
+
+// filtergroepen inklapbaar maken (alles dicht, behalve het zoekveld)
+document.querySelectorAll('.fgroup').forEach((g, i) => {
+  if (i === 0) return;
+  const lab = g.querySelector(':scope > label, :scope > .lbl');
+  const body = document.createElement('div'); body.className = 'fbody';
+  [...g.children].filter(c => c !== lab).forEach(c => body.appendChild(c));
+  const head = document.createElement('button');
+  head.type = 'button'; head.className = 'fhead'; head.setAttribute('aria-expanded', 'false');
+  head.innerHTML = `<span>${lab.textContent}</span><span class="sp"></span>`;
+  lab.remove(); g.append(head, body);
+  head.addEventListener('click', () => head.setAttribute('aria-expanded', g.classList.toggle('open')));
+});
+function markActive() {
+  document.querySelectorAll('.fgroup').forEach(g => {
+    const h = g.querySelector('.fhead'); if (!h) return;
+    const on = [...g.querySelectorAll('input[type=checkbox]')].some(c => c.checked) || [...g.querySelectorAll('select')].some(s => s.value) || [...g.querySelectorAll('input[type=range]')].some(r => +r.value < +r.max);
+    h.classList.toggle('active', on);
+  });
+}
+document.getElementById('fpanel').addEventListener('input', markActive);
+document.getElementById('fpanel').addEventListener('change', markActive);
+
+function reset() {
+  $('#q').value = ''; ['#fTrans', '#fPrijs', '#fJaar'].forEach(s => $(s).value = '');
+  $('#fKm').value = 400000; kmLabel();
+  Object.values(st).forEach(x => x.clear()); document.querySelectorAll('.fchecks input').forEach(c => c.checked = false);
+  markActive(); render();
+}
+['#q', '#fTrans', '#fPrijs', '#fJaar', '#fKm', '#sort'].forEach(s => $(s).addEventListener('input', render));
+function kmLabel() { const v = +$('#fKm').value; $('#kmOut').textContent = v >= 400000 ? '400.000+ km' : 'Tot ' + v.toLocaleString('nl-BE') + ' km'; }
+$('#fKm').addEventListener('input', kmLabel);
+$('#reset').addEventListener('click', reset);
+$('#cars').addEventListener('click', e => { if (e.target.closest('[data-reset]')) { e.preventDefault(); reset(); } });
+$('#ftoggle').addEventListener('click', () => $('#fpanel').classList.toggle('open'));
+
+// detailvenster
+const dlg = $('#detail');
+function open(id) {
+  const a = AUTOS.find(x => x.id === id);
+  dlg.innerHTML = `
+    <button class="close" aria-label="Sluiten" type="button">×</button>
+    <div class="dgrid">
+      <div class="dpic">${a.foto ? `<img src="${a.foto}" alt="${a.merk} ${a.model}">` : carSvg}</div>
+      <div class="dinfo">
+        <h2>${a.merk} ${a.model}</h2>
+        <p style="color:var(--mute)">${a.versie}</p>
+        <div class="dprice">${eur(a.prijs)}<small style="display:block;font-size:.8rem;color:var(--mute);font-weight:400">Prijs incl. btw</small></div>
+        <dl>
+          <dt>Bouwjaar</dt><dd>${a.maand}/${a.jaar}</dd>
+          <dt>Kilometerstand</dt><dd>${km(a.km)}</dd>
+          <dt>Brandstof</dt><dd>${a.brandstof}</dd>
+          <dt>Transmissie</dt><dd>${a.trans}</dd>
+          <dt>Vermogen</dt><dd>${a.kw} kW (${a.pk} pk)</dd>
+          <dt>Carrosserie</dt><dd>${a.type}</dd>
+          <dt>Kleur</dt><dd>${a.kleur}</dd>
+        </dl>
+        <div class="dbtns">
+          <a class="btn btn-primary" href="contact.html?auto=${encodeURIComponent(a.merk + ' ' + a.model + ' ' + a.versie)}">Interesse? Neem contact op</a>
+          <button class="btn btn-ghost" type="button" data-close>Terug naar het aanbod</button>
+        </div>
+      </div>
+    </div>`;
+  dlg.showModal();
+}
+$('#cars').addEventListener('click', e => { const c = e.target.closest('.car'); if (c) open(+c.dataset.id); });
+$('#cars').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('car')) { e.preventDefault(); open(+e.target.dataset.id); } });
+dlg.addEventListener('click', e => { if (e.target === dlg || e.target.closest('.close') || e.target.hasAttribute('data-close')) dlg.close(); });
+render();
+</script>
+</body>
+</html>

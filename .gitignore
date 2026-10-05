@@ -1,0 +1,4 @@
+# geheime sleutel en cache van de nummerplaat-opzoeking nooit online zetten
+api/config.php
+api/cache/*
+!api/cache/.htaccess

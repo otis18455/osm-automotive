@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact – OSM Automotive</title>
+<meta name="description" content="Neem contact op met OSM Automotive.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="site-header"></div>
+<main>
+<div class="page-head"><div class="wrap">
+  <p class="eyebrow">Contact</p>
+  <h1>Neem contact met ons op</h1>
+  <p>Een vraag over de verkoop van uw auto? Stuur ons een bericht.</p>
+</div></div>
+
+<div class="wrap form-layout">
+  <div>
+    <form id="cform" class="fs" novalidate>
+      <div class="row">
+        <div class="fld"><label for="cnaam">Naam <i>*</i></label><input id="cnaam" name="naam" class="in" autocomplete="name" required><div class="msg-err">Vul uw naam in.</div></div>
+        <div class="fld"><label for="cemail">E-mailadres <i>*</i></label><input id="cemail" name="email" type="email" class="in" autocomplete="email" required><div class="msg-err">Vul een geldig e-mailadres in.</div></div>
+      </div>
+      <div class="fld"><label for="cbericht">Bericht <i>*</i></label><textarea id="cbericht" name="bericht" class="in" required></textarea><div class="msg-err">Schrijf een bericht.</div></div>
+      <div class="hp" aria-hidden="true"><label>Laat leeg <input name="website" tabindex="-1" autocomplete="off"></label></div>
+      <button type="submit" class="btn btn-primary" id="csend">Bericht versturen</button>
+      <p style="color:var(--mute);font-size:.82rem;margin-top:14px">Met het versturen ga je akkoord met ons <a href="privacy.html" style="color:var(--text);text-decoration:underline">privacybeleid</a>.</p>
+      <p id="cdone" class="plate-msg ok" style="display:none;margin-top:16px">Bedankt voor uw bericht. Wij lezen het en antwoorden per e-mail.</p>
+    </form>
+  </div>
+  <aside class="side">
+    <div class="card">
+      <h3>Contactgegevens <span class="ph">Voorbeeld</span></h3>
+      <ul id="cinfo"></ul>
+    </div>
+  </aside>
+</div>
+</main>
+<div id="site-footer"></div>
+<script src="common.js"></script>
+<script>
+document.getElementById('cinfo').innerHTML = `<li>${CONTACT.adres}</li><li>${CONTACT.tel}</li><li><a href="mailto:${CONTACT.mail}">${CONTACT.mail}</a></li>`;
+const f = document.getElementById('cform');
+const gekozen = new URLSearchParams(location.search).get('auto');
+if (gekozen) f.bericht.value = 'Ik heb interesse in de ' + gekozen + '. ';
+function ck(el) {
+  const bad = el.type === 'email' ? !/^\S+@\S+\.\S+$/.test(el.value.trim()) : !el.value.trim();
+  el.closest('.fld').classList.toggle('bad', bad);
+  return !bad;
+}
+f.querySelectorAll('[required]').forEach(el => el.addEventListener('input', () => el.closest('.fld').classList.contains('bad') && ck(el)));
+f.addEventListener('submit', e => {
+  e.preventDefault();
+  if (f.website.value) return;
+  let ok = true;
+  f.querySelectorAll('[required]').forEach(el => { if (!ck(el)) ok = false; });
+  if (!ok) return;
+  const b = document.getElementById('csend');
+  if (b.disabled) return;
+  b.disabled = true; b.textContent = 'Bezig met versturen…';
+  // TODO e-mail: hier later het versturen koppelen. Nu wordt er nog niets verstuurd.
+  console.log('Contactbericht (nog niet verstuurd):', Object.fromEntries(new FormData(f)));
+  setTimeout(() => {
+    f.reset();
+    b.disabled = false; b.textContent = 'Bericht versturen';
+    const d = document.getElementById('cdone'); d.style.display = 'block'; d.focus?.();
+  }, 500);
+});
+</script>
+</body>
+</html>

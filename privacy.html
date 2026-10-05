@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacybeleid – OSM Automotive</title>
+<meta name="description" content="Hoe OSM Automotive omgaat met uw persoonsgegevens.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="site-header"></div>
+<main>
+<div class="page-head"><div class="wrap">
+  <p class="eyebrow">Juridisch</p>
+  <h1>Privacybeleid</h1>
+  <p>Hoe wij omgaan met de gegevens die u ons geeft.</p>
+</div></div>
+
+<section>
+  <div class="wrap legal">
+    <p class="draft"><b>Voorbeeldtekst.</b> Dit is een algemene basis die nog gecontroleerd en aangevuld moet worden met de echte bedrijfsgegevens (ondernemingsnummer, adres, contactpersoon) voordat de website live gaat. Laat de definitieve tekst bij voorkeur nakijken door een jurist.</p>
+
+    <h2>Wie zijn wij?</h2>
+    <p>OSM Automotive is verantwoordelijk voor de verwerking van uw persoonsgegevens. Contact: <span id="pmail"></span>.</p>
+
+    <h2>Welke gegevens verzamelen wij?</h2>
+    <ul>
+      <li>Gegevens over uw auto: merk, model, bouwjaar, kilometerstand, brandstof, staat en foto's.</li>
+      <li>Uw contactgegevens: naam, e-mailadres, postcode en gemeente, en eventueel uw telefoonnummer.</li>
+      <li>Berichten die u ons stuurt via het contactformulier.</li>
+    </ul>
+
+    <h2>Waarvoor gebruiken wij ze?</h2>
+    <p>Wij gebruiken uw gegevens om uw aanvraag te beoordelen, u een bod per e-mail te sturen en, als u akkoord gaat, de verkoop af te handelen. Wij gebruiken ze niet voor andere doeleinden en verkopen ze niet aan derden.</p>
+
+    <h2>Hoe lang bewaren wij ze?</h2>
+    <p>Wij bewaren uw gegevens niet langer dan nodig is voor de afhandeling van uw aanvraag en de wettelijke bewaartermijnen.</p>
+
+    <h2>Uw rechten</h2>
+    <p>U heeft het recht om uw gegevens in te zien, te laten verbeteren of te laten verwijderen, en om bezwaar te maken tegen de verwerking. Stuur hiervoor een e-mail naar het adres hierboven. U kunt ook een klacht indienen bij de Gegevensbeschermingsautoriteit (gegevensbeschermingsautoriteit.be).</p>
+
+    <h2>Cookies</h2>
+    <p>Deze website gebruikt geen tracking- of advertentiecookies. Wij bewaren tijdelijk in uw browser wat u in het formulier hebt ingevuld, zodat u het niet kwijtraakt. Dat verdwijnt zodra u het tabblad sluit.</p>
+    <p>Uw keuze in de cookiemelding (alleen noodzakelijk of alles accepteren) bewaren wij 6 maanden in uw browser, zodat wij het u niet steeds opnieuw vragen. U kunt uw keuze op elk moment wijzigen via <a href="#" data-cookie-open style="color:var(--text);text-decoration:underline">Cookie-instellingen</a> onderaan de pagina.</p>
+  </div>
+</section>
+</main>
+<div id="site-footer"></div>
+<script src="common.js"></script>
+<script>document.getElementById('pmail').innerHTML = `<a href="mailto:${CONTACT.mail}" style="color:var(--text);text-decoration:underline">${CONTACT.mail}</a>`;</script>
+</body>
+</html>

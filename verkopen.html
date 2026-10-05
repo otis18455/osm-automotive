@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auto aanbieden – OSM Automotive</title>
+<meta name="description" content="Bied uw auto aan bij OSM Automotive en ontvang een eerlijk bod per e-mail.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="site-header"></div>
+
+<main>
+<div class="page-head">
+  <div class="wrap">
+    <p class="eyebrow">Auto aanbieden</p>
+    <h1>Uw auto aanbieden</h1>
+    <p>Vul onderstaand formulier in. Wij beoordelen uw aanvraag en sturen u een bod per e-mail. Gratis en vrijblijvend.</p>
+  </div>
+</div>
+
+<div class="wrap form-layout" id="formArea">
+  <form id="form" novalidate>
+    <fieldset class="fs">
+      <legend><span class="num">1</span> Uw auto</legend>
+      <p class="hint">Vul de gegevens van uw auto in.</p>
+      <div class="row">
+        <div class="fld"><label for="merk">Merk <i>*</i></label><input id="merk" name="merk" class="in" required placeholder="bijv. Volkswagen"><div class="msg-err">Vul het merk in.</div></div>
+        <div class="fld"><label for="model">Model <i>*</i></label><input id="model" name="model" class="in" required placeholder="bijv. Golf"><div class="msg-err">Vul het model in.</div></div>
+        <div class="fld"><label for="bouwjaar">Bouwjaar <i>*</i></label><select id="bouwjaar" name="bouwjaar" class="in" required><option value="">Kies bouwjaar</option></select><div class="msg-err">Kies het bouwjaar.</div></div>
+        <div class="fld"><label for="km">Kilometerstand <i>*</i></label><input id="km" name="km" type="number" inputmode="numeric" min="0" max="999999" class="in" required placeholder="bijv. 85000"><div class="msg-err">Vul de kilometerstand in.</div></div>
+        <div class="fld"><label for="brandstof">Brandstof <i>*</i></label><select id="brandstof" name="brandstof" class="in" required><option value="">Kies brandstof</option><option>Benzine</option><option>Diesel</option><option>Hybride</option><option>Plug-in hybride</option><option>Elektrisch</option><option>LPG / CNG</option></select><div class="msg-err">Kies de brandstof.</div></div>
+        <div class="fld"><label for="transmissie">Transmissie</label><select id="transmissie" name="transmissie" class="in"><option value="">Kies transmissie</option><option>Handgeschakeld</option><option>Automaat</option></select></div>
+        <div class="fld"><label for="kleur">Kleur</label><input id="kleur" name="kleur" class="in" placeholder="optioneel"></div>
+      </div>
+    </fieldset>
+
+    <fieldset class="fs">
+      <legend><span class="num">2</span> Staat van de auto</legend>
+      <p class="hint">Wees eerlijk. Kleine schade is geen probleem, verrassingen wel.</p>
+      <div class="row">
+        <div class="fld"><label for="staat">Algemene staat <i>*</i></label><select id="staat" name="staat" class="in" required><option value="">Kies…</option><option>Uitstekend</option><option>Goed</option><option>Redelijk</option><option>Matig</option></select><div class="msg-err">Kies de staat.</div></div>
+        <div class="fld"><label for="onderhoud">Onderhoudshistorie</label><select id="onderhoud" name="onderhoud" class="in"><option value="">Kies…</option><option>Volledig onderhoudsboekje</option><option>Gedeeltelijk</option><option>Onbekend</option></select></div>
+        <div class="fld"><label for="schade">Schade of gebreken?</label><select id="schade" name="schade" class="in"><option>Nee</option><option>Ja</option></select></div>
+        <div class="fld"><label for="rijklaar">Rijdt de auto normaal?</label><select id="rijklaar" name="rijklaar" class="in"><option>Ja</option><option>Nee</option></select></div>
+      </div>
+      <div class="fld"><label for="opmerkingen">Opmerkingen</label><textarea id="opmerkingen" name="opmerkingen" class="in" placeholder="Beschrijf schade, opties, recent onderhoud of andere bijzonderheden."></textarea></div>
+    </fieldset>
+
+    <fieldset class="fs">
+      <legend><span class="num">3</span> Foto's</legend>
+      <p class="hint">Optioneel, maar foto's helpen ons bij het bod.</p>
+      <label for="photos" class="file" id="drop"><b>Foto's toevoegen of hierheen slepen</b>Voor-, achter- en zijkant, interieur en kilometerteller (max. 6 foto's, elk max. 8 MB)</label>
+      <input id="photos" name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/heic" multiple hidden>
+      <p class="plate-msg" id="photoMsg" role="status" aria-live="polite"></p>
+      <div class="thumbs" id="thumbs"></div>
+    </fieldset>
+
+    <fieldset class="fs" id="contact">
+      <legend><span class="num">4</span> Uw gegevens</legend>
+      <p class="hint">Uw bod sturen wij naar uw e-mailadres.</p>
+      <div class="row">
+        <div class="fld"><label for="naam">Naam <i>*</i></label><input id="naam" name="naam" class="in" autocomplete="name" required><div class="msg-err">Vul uw naam in.</div></div>
+        <div class="fld"><label for="email">E-mailadres <i>*</i></label><input id="email" name="email" type="email" class="in" autocomplete="email" required><div class="msg-err">Vul een geldig e-mailadres in.</div></div>
+        <div class="fld"><label for="tel">Telefoonnummer</label><input id="tel" name="tel" type="tel" inputmode="tel" class="in" autocomplete="tel" placeholder="bijv. +32 470 12 34 56 (optioneel)"><div class="msg-err">Vul een geldig telefoonnummer in of laat het leeg.</div></div>
+        <div class="fld"><label for="plaats">Postcode en gemeente <i>*</i></label><input id="plaats" name="plaats" class="in" autocomplete="postal-code" placeholder="bijv. 2000 Antwerpen" required><div class="msg-err">Vul uw postcode of plaats in.</div></div>
+      </div>
+      <div class="hp" aria-hidden="true"><label>Laat leeg <input name="website" tabindex="-1" autocomplete="off"></label></div>
+      <div class="fld" id="akkoordFld">
+        <label class="check"><input type="checkbox" name="akkoord" required> <span>Ik ga ermee akkoord dat OSM Automotive mijn gegevens gebruikt om mij een bod per e-mail te sturen. Lees ons <a href="privacy.html" target="_blank" rel="noopener" style="color:var(--text);text-decoration:underline">privacybeleid</a>. <i style="color:var(--red);font-style:normal">*</i></span></label>
+        <div class="msg-err">Ga akkoord om de aanvraag te versturen.</div>
+      </div>
+      <div class="submit-row">
+        <button type="submit" class="btn btn-primary" id="submitBtn">Aanvraag versturen</button>
+        <small>Gratis en vrijblijvend. Velden met * zijn verplicht.</small>
+      </div>
+    </fieldset>
+  </form>
+
+  <aside class="side">
+    <div class="card">
+      <h3>Wat kunt u verwachten?</h3>
+      <ul>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Wij beoordelen uw aanvraag</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>U ontvangt een bod per e-mail</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Geen kosten en geen verplichtingen</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Akkoord? Dan regelen we overdracht en betaling</li>
+      </ul>
+    </div>
+  </aside>
+</div>
+
+<div class="success" id="success">
+  <div class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+  <h1 style="font-size:2rem">Bedankt voor uw aanvraag</h1>
+  <p>Wij hebben uw gegevens ontvangen en beoordelen uw <b id="okAuto">auto</b>. U ontvangt ons bod per e-mail op <b id="okMail"></b>.</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <a href="index.html" class="btn btn-primary">Terug naar home</a>
+    <a href="verkopen.html" class="btn btn-ghost">Nog een auto aanbieden</a>
+  </div>
+</div>
+</main>
+
+<div id="site-footer"></div>
+<script src="common.js"></script>
+<script src="verkopen.js"></script>
+</body>
+</html>
