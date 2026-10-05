@@ -42,6 +42,9 @@ document.getElementById('site-footer').innerHTML = `
   <div class="wrap copy"><span>© ${new Date().getFullYear()} OSM Automotive. Alle rechten voorbehouden.</span><span class="legal-links"><a href="privacy.html">Privacybeleid</a><a href="#" data-cookie-open>Cookie-instellingen</a></span></div>
 </footer>`;
 
+// gsm: vaste 'Auto aanbieden'-knop onderaan (niet op het formulier zelf)
+if (page !== 'verkopen.html') document.body.insertAdjacentHTML('beforeend', '<div class="m-cta"><a href="verkopen.html" class="btn btn-primary">Auto aanbieden</a></div>');
+
 const btn = document.getElementById('menuBtn');
 const menu = document.getElementById('mobileMenu');
 const setMenu = open => { menu.classList.toggle('open', open); btn.setAttribute('aria-expanded', open); };
